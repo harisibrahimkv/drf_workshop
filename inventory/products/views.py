@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 
 from rest_framework import viewsets
 
-from .models import Cateogry
+from .models import Category
 
 from .serializers import UserSerializer, CategorySerializer
 

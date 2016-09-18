@@ -2,7 +2,7 @@ from rest_framework import routers
 
 from django.conf.urls import url
 
-from products.views import UserViewSet, CateogryViewSet
+from products.views import UserViewSet, CategoryViewSet
 
 router = routers.SimpleRouter()
 
