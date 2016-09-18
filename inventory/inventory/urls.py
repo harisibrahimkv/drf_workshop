@@ -18,4 +18,5 @@ from django.contrib import admin
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    uri(r'^api/v1/', include('inventory.api_urls'),
 ]
