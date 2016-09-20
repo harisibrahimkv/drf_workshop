@@ -1,0 +1,37 @@
+1. Implement the Cateogry model and define the /categories/ endpoint.
+ * curl -H "Content-Type:application/json" -X POST -d '{"name":"Fruits"}' "http://localhost:8000/api/v1/categories/"
+ * curl -H "Content-Type:application/json" -X DELETE "http://localhost:8000/api/v1/categories/2/"
+ * curl -H "Content-Type:application/json" -X GET "http://localhost:8000/api/v1/categories/"
+ * curl -H "Content-Type:application/json" -X GET "http://localhost:8000/api/v1/categories/1/"
+ * curl -H "Content-Type:application/json" -X PATCH -d '{"name":"Vegetables"}' "http://localhost:8000/api/v1/categories/1/"
+
+2. Breakup the SimpleRouter entry for /categories/ and implement it manually.
+ - url(r'^categories/$', CategoryViewSet, name='category-list')
+ - url(r'^categories/$', CategoryViewSet.as_view(), name='category-list')
+ - url(r'^categories/$', CategoryViewSet.as_view({'get':'list'}), name='category-list')
+
+ * curl -H "Content-Type:application/json" -X GET "http://localhost:8000/api/v1/categories/"
+ * curl -H "Content-Type:application/json" -X POST -d '{"name":"Fruits"}' "http://localhost:8000/api/v1/categories/"
+ X {"detail":"Method \"POST\" not allowed."}
+
+ - url(r'^categories/$', CategoryViewSet.as_view({'get':'list', 'post':'create'}), name='category-list')
+
+ * curl -H "Content-Type:application/json" -X POST -d '{"name":"Fruits"}' "http://localhost:8000/api/v1/categories/"
+ * curl -H "Content-Type:application/json" -X DELETE "http://localhost:8000/api/v1/categories/3/"
+ X Page not found (404)
+
+ - url(r'^categories/(?P<pk>[0-9]+)/$', CategoryViewSet.as_view({'delete':'destroy'}), name='category-detail')
+
+ * curl -H "Content-Type:application/json" -X DELETE "http://localhost:8000/api/v1/categories/3/"
+ * curl -H "Content-Type:application/json" -X GET "http://localhost:8000/api/v1/categories/1/"
+ X {"detail":"Method \"GET\" not allowed."}
+
+ - url(r'^categories/(?P<pk>[0-9]+)/$', CategoryViewSet.as_view({'get':'retrieve', 'delete':'destroy'}), name='category-detail')
+
+ * curl -H "Content-Type:application/json" -X GET "http://localhost:8000/api/v1/categories/1/"
+ * curl -H "Content-Type:application/json" -X PATCH -d '{"name":"Meat"}' "http://localhost:8000/api/v1/categories/1/"
+ X {"detail":"Method \"PATCH\" not allowed."}
+
+ - url(r'^categories/(?P<pk>[0-9]+)/$', CategoryViewSet.as_view({'get':'retrieve', 'delete':'destroy', 'patch':'update'}), name='category-detail')
+
+ * curl -H "Content-Type:application/json" -X PATCH -d '{"name":"Meat"}' "http://localhost:8000/api/v1/categories/1/"
