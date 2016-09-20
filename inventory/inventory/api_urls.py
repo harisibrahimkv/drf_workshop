@@ -12,10 +12,15 @@ router.register(
     base_name='user'
 )
 
-router.register(
-    r'categories',
-    CategoryViewSet,
-    base_name='category'
-)
+# router.register(
+#     r'categories',
+#     CategoryViewSet,
+#     base_name='category'
+# )
 
-urlpatterns = router.urls
+urlpatterns = [
+    url(r'^categories/$', CategoryViewSet.as_view({'get':'list', 'post':'create'}), name='category-list'),
+    url(r'^categories/(?P<pk>[0-9]+)/$', CategoryViewSet.as_view({'get':'retrieve', 'delete':'destroy', 'patch':'update'}), name='category-detail'),
+]
+
+urlpatterns += router.urls
