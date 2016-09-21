@@ -1,4 +1,5 @@
 1. Implement the Cateogry model and define the /categories/ endpoint.
+
  * curl -H "Content-Type:application/json" -X POST -d '{"name":"Fruits"}' "http://localhost:8000/api/v1/categories/"
  * curl -H "Content-Type:application/json" -X DELETE "http://localhost:8000/api/v1/categories/2/"
  * curl -H "Content-Type:application/json" -X GET "http://localhost:8000/api/v1/categories/"
@@ -6,6 +7,7 @@
  * curl -H "Content-Type:application/json" -X PATCH -d '{"name":"Vegetables"}' "http://localhost:8000/api/v1/categories/1/"
 
 2. Breakup the SimpleRouter entry for /categories/ and implement it manually.
+
  - url(r'^categories/$', CategoryViewSet, name='category-list')
  - url(r'^categories/$', CategoryViewSet.as_view(), name='category-list')
  - url(r'^categories/$', CategoryViewSet.as_view({'get':'list'}), name='category-list')
@@ -47,3 +49,7 @@
    [{"id":1,"category_count":3}]
 
 5. Update Stat whenever a Cateogry is deleted. (Override `def destroy()`)
+
+ * curl -H "Content-Type:application/json" -X DELETE "http://localhost:8000/api/v1/categories/5/"
+ * curl -H "Content-Type:application/json" -X GET "http://localhost:8000/api/v1/stats/"
+   [{"id":1,"category_count":2}]
