@@ -39,3 +39,11 @@
 3. Create a Stat model and a /stats/ endpoint (Use ReadOnlyModelViewSet).
 
  * curl -H "Content-Type:application/json" -X GET "http://localhost:8000/api/v1/stats/"
+
+4. Update Stat whenever a Category is created. (Override `def create()`)
+
+ * curl -H "Content-Type:application/json" -X POST -d '{"name":"Crockery"}' "http://localhost:8000/api/v1/categories/"
+ * curl -H "Content-Type:application/json" -X GET "http://localhost:8000/api/v1/stats/"
+   [{"id":1,"category_count":3}]
+
+5. Update Stat whenever a Cateogry is deleted. (Override `def destroy()`)
