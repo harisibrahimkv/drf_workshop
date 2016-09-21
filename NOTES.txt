@@ -53,3 +53,5 @@
  * curl -H "Content-Type:application/json" -X DELETE "http://localhost:8000/api/v1/categories/5/"
  * curl -H "Content-Type:application/json" -X GET "http://localhost:8000/api/v1/stats/"
    [{"id":1,"category_count":2}]
+
+6. Add a `status` field to the Category model.
