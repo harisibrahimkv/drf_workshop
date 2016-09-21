@@ -35,3 +35,7 @@
  - url(r'^categories/(?P<pk>[0-9]+)/$', CategoryViewSet.as_view({'get':'retrieve', 'delete':'destroy', 'patch':'update'}), name='category-detail')
 
  * curl -H "Content-Type:application/json" -X PATCH -d '{"name":"Meat"}' "http://localhost:8000/api/v1/categories/1/"
+
+3. Create a Stat model and a /stats/ endpoint (Use ReadOnlyModelViewSet).
+
+ * curl -H "Content-Type:application/json" -X GET "http://localhost:8000/api/v1/stats/"
