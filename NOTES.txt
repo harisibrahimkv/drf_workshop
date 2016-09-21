@@ -34,7 +34,7 @@
  * curl -H "Content-Type:application/json" -X PATCH -d '{"name":"Meat"}' "http://localhost:8000/api/v1/categories/1/"
  X {"detail":"Method \"PATCH\" not allowed."}
 
- - url(r'^categories/(?P<pk>[0-9]+)/$', CategoryViewSet.as_view({'get':'retrieve', 'delete':'destroy', 'patch':'update'}), name='category-detail')
+ - url(r'^categories/(?P<pk>[0-9]+)/$', CategoryViewSet.as_view({'get':'retrieve', 'delete':'destroy', 'patch':'partial_update'}), name='category-detail')
 
  * curl -H "Content-Type:application/json" -X PATCH -d '{"name":"Meat"}' "http://localhost:8000/api/v1/categories/1/"
 
@@ -55,3 +55,10 @@
    [{"id":1,"category_count":2}]
 
 6. Add a `status` field to the Category model.
+
+ * curl -H "Content-Type:application/json" -X GET "http://localhost:8000/api/v1/categories/"
+   [{"id":1,"name":"Meat","status":1},{"id":4,"name":"Crockery","status":1},{"id":5,"name":"Cosmetics","status":1}
+ * curl -H "Content-Type:application/json" -X PATCH -d '{"status":0}' "http://localhost:8000/api/v1/categories/5/"
+   {"id":5,"name":"Cosmetics","status":0}
+
+7. Only display categories with status 1. (Override `def get_queryset()`)
