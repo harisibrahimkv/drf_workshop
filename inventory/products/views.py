@@ -38,6 +38,19 @@ class CategoryViewSet(viewsets.ModelViewSet):
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+
+        s = Stat.objects.get()
+        s.category_count -= 1
+        # This should never happen. The idea here is to just demonstrate overriding destroy().
+        if s.category_count < 1:
+            s.category_count = 0
+        s.save()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 class StatViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Stat.objects.all()
