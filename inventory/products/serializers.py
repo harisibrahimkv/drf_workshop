@@ -23,6 +23,12 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
 
+    def create(self, validated_data):
+        category_data = validated_data.pop('category')
+        category = Category.objects.get(**category_data)
+        product = Product.objects.create(category=category, **validated_data)
+        return product
+
 
 class StatSerializer(serializers.ModelSerializer):
     class Meta:
