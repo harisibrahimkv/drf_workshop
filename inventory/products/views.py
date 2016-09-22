@@ -61,6 +61,21 @@ class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
 
+    def get_queryset(self):
+        queryset = Product.objects.all()
+
+        category_id = self.kwargs.get('categories_pk', None)
+        product_id = self.kwargs.get('pk', None)
+
+        if category_id:
+            category = Category.objects.get(id=category_id)
+            queryset = queryset.filter(category=category)
+
+        if product_id:
+            queryset = queryset.filter(id=product_id)
+
+        return queryset
+
 
 class StatViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Stat.objects.all()
