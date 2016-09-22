@@ -5,6 +5,7 @@ from django.conf.urls import url
 from products.views import (
     UserViewSet,
     CategoryViewSet,
+    ProductViewSet,
     StatViewSet
 )
 
@@ -26,6 +27,12 @@ router.register(
     r'stats',
     StatViewSet,
     base_name='stat'
+)
+
+router.register(
+    r'products',
+    ProductViewSet,
+    base_name='product'
 )
 
 urlpatterns = [
