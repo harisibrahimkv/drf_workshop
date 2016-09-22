@@ -5,11 +5,12 @@ from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.response import Response
 
-from .models import Category, Stat
+from .models import Category, Stat, Product
 
 from .serializers import (
     UserSerializer,
     CategorySerializer,
+    ProductSerializer,
     StatSerializer
 )
 
@@ -54,6 +55,11 @@ class CategoryViewSet(viewsets.ModelViewSet):
         s.save()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class ProductViewSet(viewsets.ModelViewSet):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
 
 
 class StatViewSet(viewsets.ReadOnlyModelViewSet):
