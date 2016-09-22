@@ -138,6 +138,61 @@ marked with a '*'.
         category_data = validated_data.pop('category')
         category = Category.objects.get(**category_data)
         product = Product.objects.create(category=category, **validated_data)
-        return product        
+        return product
+
  * curl -H "Content-Type:application/json" -X POST -d '{"name":"Stove", "category":{"id":4,"name":"Crockery","status":1}}' "http://localhost:8000/api/v1/products/"
-   {"id":3,"category":{"id":4,"name":"Crockery","status":1},"name":"Stove"}
+ O {"id":3,"category":{"id":4,"name":"Crockery","status":1},"name":"Stove"}
+
+11. It is cumbersome to keep sending the entire JSON of an FK object
+    whenever you want a new object to be created. So let's se e how we can
+    fix that. Let's edit ProductSerializer. (Remember to comment out the
+    overridden .create() method as we no lon ger need that
+
+ - class ProductSerializer(serializers.ModelSerializer):
+       category_id = serializers.PrimaryKeyRelatedField(
+            write_only=True,
+	    queryset=Category.objects.all(),
+            source='category'
+       )
+       category = CategorySerializer(read_only=True)
+
+       class Meta:
+            model = Product
+            fields = ('id', 'name', 'category_id', 'category')
+ * curl -H "Content-Type:application/json" -X POST -d '{"name":"Glass", "category_id":4}' "http://localhost:8000/api/v1/products/"
+ O {"id":4,"name":"Glass","category":{"id":4,"name":"Crockery","status":1}}
+ * curl -H "Content-Type:application/json" -X GET "http://localhost:8000/api/v1/products/"
+ O {
+    "count": 3,
+    "next": null,
+    "previous": null,
+    "results": [
+        {
+            "id": 1,
+            "name": "Vessel",
+            "category": {
+                "id": 4,
+                "name": "Crockery",
+                "status": 1
+            }
+        },
+        {
+            "id": 3,
+            "name": "Stove",
+            "category": {
+                "id": 4,
+                "name": "Crockery",
+                "status": 1
+            }
+        },
+        {
+            "id": 4,
+            "name": "Glass",
+            "category": {
+                "id": 4,
+                "name": "Crockery",
+                "status": 1
+            }
+        }
+    ]
+   }
