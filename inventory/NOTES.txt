@@ -214,3 +214,126 @@ marked with a '*'.
    }
 
 13. What if we want to list all the Products under one Category? Let's nest our urls!
+ - urlpatterns = [
+    url(r'^categories/$', CategoryViewSet.as_view(ListCreateMapper), name='category-list'),
+    url(r'^categories/(?P<pk>[0-9]+)/$', CategoryViewSet.as_view(RetrieveUpdateDestroyMapper), name='category-detail'),
+    url(r'^categories/(?P<pk>[0-9]+)/products/$', ProductViewSet.as_view(ListCreateMapper), name='product-list'),
+    url(r'^categories/(?P<pk>[0-9]+)/products/(?P<pk>[0-9]+)/$', ProductViewSet.as_view(RetrieveUpdateDestroyMapper), name='caproduct-detail'),
+]
+ * curl -H "Content-Type:application/json" -X GET "http://localhost:8000/api/v1/categories/"
+ X django.core.exceptions.ImproperlyConfigured: "^categories/(?P<pk>[0-9]+)/products/(?P<pk>[0-9]+)/$" is not a valid regular expression: redefinition of group name 'pk' as group 2; was group 1
+
+ -  url(r'^categories/(?P<categories_pk>[0-9]+)/products/$', ProductViewSet.as_view(ListCreateMapper), name='product-list'),
+    url(r'^categories/(?P<categories_pk>[0-9]+)/products/(?P<pk>[0-9]+)/$', ProductViewSet.as_view(RetrieveUpdateDestroyMapper), name='caproduct-detail')
+
+ * curl -H "Content-Type:application/json" -X GET "http://localhost:8000/api/v1/categories/"
+
+ * curl -H "Content-Type:application/json" -X POST -d '{"name":"Chicken", "category_id":1}' "http://localhost:8000/api/v1/categories/1/products/"
+ O {"id":6,"name":"Chicken","category":{"id":1,"name":"Meat","status":1}}
+
+ * curl -H "Content-Type:application/json" -X GET "http://localhost:8000/api/v1/categories/4/products/"
+ X {
+    "count": 5,
+    "next": null,
+    "previous": null,
+    "results": [
+        {
+            "id": 1,
+            "name": "Vessel",
+            "category": {
+                "id": 4,
+                "name": "Crockery",
+                "status": 1
+            }
+        },
+        {
+            "id": 3,
+            "name": "Stove",
+            "category": {
+                "id": 4,
+                "name": "Crockery",
+                "status": 1
+            }
+        },
+        {
+            "id": 4,
+            "name": "Glass",
+            "category": {
+                "id": 4,
+                "name": "Crockery",
+                "status": 1
+            }
+        },
+        {
+            "id": 5,
+            "name": "Glass",
+            "category": {
+                "id": 1,
+                "name": "Meat",
+                "status": 1
+            }
+        },
+        {
+            "id": 6,
+            "name": "Chicken",
+            "category": {
+                "id": 1,
+                "name": "Meat",
+                "status": 1
+            }
+        }
+    ]
+   }
+
+14. Override get_queryset on the ProductViewSet.
+
+ - def get_queryset(self):
+        queryset = Product.objects.all()
+
+        category_id = self.kwargs.get('categories_pk', None)
+        product_id = self.kwargs.get('pk', None)
+
+        if category_id:
+            category = Category.objects.get(id=category_id)
+            queryset = queryset.filter(category=category)
+
+        if product_id:
+            queryset = queryset.filter(id=product_id)
+
+        return queryset
+
+  * curl -H "Content-Type:application/json" -X GET "http://localhost:8000/api/v1/categories/4/products/"
+  O {
+    "count": 3,
+    "next": null,
+    "previous": null,
+    "results": [
+        {
+            "id": 1,
+            "name": "Vessel",
+            "category": {
+                "id": 4,
+                "name": "Crockery",
+                "status": 1
+            }
+        },
+        {
+            "id": 3,
+            "name": "Stove",
+            "category": {
+                "id": 4,
+                "name": "Crockery",
+                "status": 1
+            }
+        },
+        {
+            "id": 4,
+            "name": "Glass",
+            "category": {
+                "id": 4,
+                "name": "Crockery",
+                "status": 1
+            }
+        }
+    ]
+   }
