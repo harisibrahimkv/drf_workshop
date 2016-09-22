@@ -102,6 +102,7 @@ marked with a '*'.
        category = CategorySerializer()
        class Meta:
            model = Product
+
  * curl -H "Content-Type:application/json" -X GET "http://localhost:8000/api/v1/products/" | python -m json.tool
  O {
     "count": 1,
@@ -119,6 +120,7 @@ marked with a '*'.
         }
     ]
    }
+
  * curl -H "Content-Type:application/json" -X POST -d '{"name":"Vessel", "category":4}' "http://localhost:8000/api/v1/products/"
  X {"category":{"non_field_errors":["Invalid data. Expected a dictionary, but got int."]}}
 
@@ -159,8 +161,10 @@ marked with a '*'.
        class Meta:
             model = Product
             fields = ('id', 'name', 'category_id', 'category')
+
  * curl -H "Content-Type:application/json" -X POST -d '{"name":"Glass", "category_id":4}' "http://localhost:8000/api/v1/products/"
  O {"id":4,"name":"Glass","category":{"id":4,"name":"Crockery","status":1}}
+
  * curl -H "Content-Type:application/json" -X GET "http://localhost:8000/api/v1/products/"
  O {
     "count": 3,
@@ -196,3 +200,17 @@ marked with a '*'.
         }
     ]
    }
+
+12. Simply create the following dictionaries in api_urls.py to hold the http_method to python_method mapping.
+ - ListCreateMapper = {
+    'get':'list',
+    'post':'create'
+   }
+
+ - RetrieveUpdateDestroyMapper = {
+    'get':'retrieve',
+    'delete':'destroy',
+    'patch':'partial_update'
+   }
+
+13. What if we want to list all the Products under one Category? Let's nest our urls!
