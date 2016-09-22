@@ -68,3 +68,4 @@
  * curl -H "Content-Type:application/json" -X GET "http://localhost:8000/api/v1/categories/"
    [{"id":1,"name":"Meat","status":1},{"id":4,"name":"Crockery","status":1}]
 
+8. Create a Product model and a /products/ endpoint.
