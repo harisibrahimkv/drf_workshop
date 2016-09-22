@@ -119,3 +119,25 @@ marked with a '*'.
         }
     ]
    }
+ * curl -H "Content-Type:application/json" -X POST -d '{"name":"Vessel", "category":4}' "http://localhost:8000/api/v1/products/"
+ X {"category":{"non_field_errors":["Invalid data. Expected a dictionary, but got int."]}}
+
+ * curl -H "Content-Type:application/json" -X POST -d '{"name":"Stove", "category":{"id":4,"name":"Crockery","status":1}}' "http://localhost:8000/api/v1/products/"
+ X AssertionError: The `.create()` method does not support writable
+   nested fields by default.  Write an explicit `.create()` method for
+   serializer `products.serializers.ProductSerializer`, or set
+   `read_only=True` on ne sted serializer fields.
+
+10. Override the .create() method on the ProductSerializer. (We are
+    not putting read_only=True because category is a required FK value for
+    a product object to be created. You can try putting
+    read_only=True. You will get a "IntegrityError: NOT NULL constraint
+    failed" error)
+
+ - def create(self, validated_data):
+        category_data = validated_data.pop('category')
+        category = Category.objects.get(**category_data)
+        product = Product.objects.create(category=category, **validated_data)
+        return product        
+ * curl -H "Content-Type:application/json" -X POST -d '{"name":"Stove", "category":{"id":4,"name":"Crockery","status":1}}' "http://localhost:8000/api/v1/products/"
+   {"id":3,"category":{"id":4,"name":"Crockery","status":1},"name":"Stove"}
