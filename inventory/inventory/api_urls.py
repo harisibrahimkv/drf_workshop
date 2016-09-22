@@ -35,9 +35,20 @@ router.register(
     base_name='product'
 )
 
+ListCreateMapper = {
+    'get':'list',
+    'post':'create'
+}
+
+RetrieveUpdateDestroyMapper = {
+    'get':'retrieve',
+    'delete':'destroy',
+    'patch':'partial_update'
+}
+
 urlpatterns = [
-    url(r'^categories/$', CategoryViewSet.as_view({'get':'list', 'post':'create'}), name='category-list'),
-    url(r'^categories/(?P<pk>[0-9]+)/$', CategoryViewSet.as_view({'get':'retrieve', 'delete':'destroy', 'patch':'partial_update'}), name='category-detail'),
+    url(r'^categories/$', CategoryViewSet.as_view(ListCreateMapper), name='category-list'),
+    url(r'^categories/(?P<pk>[0-9]+)/$', CategoryViewSet.as_view(RetrieveUpdateDestroyMapper), name='category-detail'),
 ]
 
 urlpatterns += router.urls
