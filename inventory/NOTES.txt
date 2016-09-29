@@ -19,6 +19,9 @@ marked with a '*'.
 
 1. Implement the Cateogry model and define the /categories/ endpoint.
 
+ - class Category(models.Model):
+       name = models.CharField(max_length=50)
+
  * curl -H "Content-Type:application/json" -X POST -d '{"name":"Fruits"}' "http://localhost:8000/api/v1/categories/"
  * curl -H "Content-Type:application/json" -X DELETE "http://localhost:8000/api/v1/categories/2/"
  * curl -H "Content-Type:application/json" -X GET "http://localhost:8000/api/v1/categories/"
@@ -59,6 +62,9 @@ marked with a '*'.
 
 3. Create a Stat model and a /stats/ endpoint (Use ReadOnlyModelViewSet).
 
+ - class Stat(models.Model):
+       category_count = models.IntegerField()
+
  * curl -H "Content-Type:application/json" -X GET "http://localhost:8000/api/v1/stats/"
 
 4. Update Stat whenever a Category is created. (Override `def create()`)
@@ -67,13 +73,18 @@ marked with a '*'.
  * curl -H "Content-Type:application/json" -X GET "http://localhost:8000/api/v1/stats/"
  O [{"id":1,"category_count":3}]
 
-5. Update Stat whenever a Cateogry is deleted. (Override `def destroy()`)
+5. Update Stat whenever a Cateogry is deleted. (Override `def destroy()`).
 
  * curl -H "Content-Type:application/json" -X DELETE "http://localhost:8000/api/v1/categories/5/"
  * curl -H "Content-Type:application/json" -X GET "http://localhost:8000/api/v1/stats/"
  O [{"id":1,"category_count":2}]
 
-6. Add a `status` field to the Category model.
+6. Add a `status` field to the Category model. In point 5 above, we
+   are doing a hard delete of the category model. Instead, while
+   overriding destroy(), you can probably just set the `status` field
+   to 0, ie, a soft delete.
+
+ - status = models.IntegerField(default=1)
 
  * curl -H "Content-Type:application/json" -X GET "http://localhost:8000/api/v1/categories/"
  O [{"id":1,"name":"Meat","status":1},{"id":4,"name":"Crockery","status":1},{"id":5,"name":"Cosmetics","status":1}]
@@ -88,7 +99,11 @@ marked with a '*'.
  O [{"id":1,"name":"Meat","status":1},{"id":4,"name":"Crockery","status":1}]
 
 8. Create a Product model and a /products/ endpoint.
-8.1. Add REST_FRAMEWORK = {'PAGE_SIZE':10} to settings. 
+8.1. Add REST_FRAMEWORK = {'PAGE_SIZE':10} to settings.
+
+ - class Product(models.Model):
+       name = models.CharField(max_length=50)
+       category = models.ForeignKey(Category)
 
  * curl -H "Content-Type:application/json" -X GET "http://localhost:8000/api/v1/categories/"
  O [{"id":1,"name":"Meat","status":1},{"id":4,"name":"Crockery","status":1}]
@@ -148,7 +163,7 @@ marked with a '*'.
 11. It is cumbersome to keep sending the entire JSON of an FK object
     whenever you want a new object to be created. So let's se e how we can
     fix that. Let's edit ProductSerializer. (Remember to comment out the
-    overridden .create() method as we no lon ger need that
+    overridden .create() method as we no longer need that)
 
  - class ProductSerializer(serializers.ModelSerializer):
        category_id = serializers.PrimaryKeyRelatedField(
