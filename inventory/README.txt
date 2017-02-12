@@ -31,7 +31,16 @@ marked with a '*'.
 2. Breakup the SimpleRouter entry for /categories/ and implement it manually.
 
  - url(r'^categories/$', CategoryViewSet, name='category-list')
+ X {
+    `Exception Type:     TypeError
+    Exception Value: __init__() takes exactly 1 argument (2 given)`
+ }
+
  - url(r'^categories/$', CategoryViewSet.as_view(), name='category-list')
+ X {
+    `TypeError: The 'actions' argument must be provided when calling '.as_view()' on a ViewSet. For example '.as_view({'get': 'list'})'`
+ }
+
  - url(r'^categories/$', CategoryViewSet.as_view({'get':'list'}), name='category-list')
 
  * curl -H "Content-Type:application/json" -X GET "http://localhost:8000/api/v1/categories/"
