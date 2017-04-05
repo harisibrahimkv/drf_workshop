@@ -9,7 +9,7 @@ class Category(models.Model):
 
 
 class Stat(models.Model):
-    category_count = models.IntegerField()
+    category_count = models.IntegerField(default=0)
 
 
 class Product(models.Model):

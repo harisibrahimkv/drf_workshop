@@ -1,5 +1,29 @@
+Project Description
+-------------------
+
+A very basic inventory system with products and categories. We'll use
+the following models:
+
+
+class Category(models.Model):
+    name = models.CharField(max_length=50)
+    status = models.IntegerField(default=1)
+
+
+class Stat(models.Model):
+    category_count = models.IntegerField(default=0)
+
+
+class Product(models.Model):
+    name = models.CharField(max_length=50)
+    category = models.ForeignKey(Category)
+
+
+
 A guide to following the steps below
 ------------------------------------
+
+First of all, please keep http://www.cdrf.co/ open.
 
 The bullet numbers below are actions that you have to do. Each bullet
 point refers to the implementation of one part of the project.
@@ -17,6 +41,7 @@ project at that point.
 The 'O's are expected outputs of the immediately preceeding API calls
 marked with a '*'.
 
+
 1. Implement the Cateogry model and define the /categories/ endpoint.
 
  - class Category(models.Model):
@@ -32,14 +57,16 @@ marked with a '*'.
 
  - url(r'^categories/$', CategoryViewSet, name='category-list')
  X {
-    `Exception Type:     TypeError
+    `Exception Type: TypeError
     Exception Value: __init__() takes exactly 1 argument (2 given)`
- }
+   }
 
  - url(r'^categories/$', CategoryViewSet.as_view(), name='category-list')
  X {
-    `TypeError: The 'actions' argument must be provided when calling '.as_view()' on a ViewSet. For example '.as_view({'get': 'list'})'`
- }
+    `TypeError: The 'actions' argument must be provided when calling
+    '.as_view()' on a ViewSet. For example '.as_view({'get': '
+    list'})'`
+   }
 
  - url(r'^categories/$', CategoryViewSet.as_view({'get':'list'}), name='category-list')
 
@@ -78,20 +105,47 @@ marked with a '*'.
 
 4. Update Stat whenever a Category is created. (Override `def create()`)
 
+ - def create(self, request, *args, **kwargs):
+       serializer = self.get_serializer(data=request.data)
+       serializer.is_valid(raise_exception=True)
+       self.perform_create(serializer)
+       if Stat.objects.exists():
+           s = Stat.objects.get()
+           s.category_count += 1
+           s.save()
+       else:
+           Stat.objects.create(category_count=1)
+       headers = self.get_success_headers(serializer.data)
+       return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
  * curl -H "Content-Type:application/json" -X POST -d '{"name":"Crockery"}' "http://localhost:8000/api/v1/categories/"
  * curl -H "Content-Type:application/json" -X GET "http://localhost:8000/api/v1/stats/"
  O [{"id":1,"category_count":3}]
 
 5. Update Stat whenever a Cateogry is deleted. (Override `def destroy()`).
 
+ - def destroy(self, request, *args, **kwargs):
+       instance = self.get_object()
+       self.perform_destroy(instance)
+
+       s = Stat.objects.get()
+       s.category_count -= 1
+       # This should never happen. The idea here is to just demonstrate overriding destroy().
+       # if s.category_count < 1:
+       #    s.category_count = 0
+       s.save()
+
+       return Response(status=status.HTTP_204_NO_CONTENT)
+
  * curl -H "Content-Type:application/json" -X DELETE "http://localhost:8000/api/v1/categories/5/"
  * curl -H "Content-Type:application/json" -X GET "http://localhost:8000/api/v1/stats/"
  O [{"id":1,"category_count":2}]
 
-6. Add a `status` field to the Category model. In point 5 above, we
-   are doing a hard delete of the category model. Instead, while
-   overriding destroy(), you can probably just set the `status` field
-   to 0, ie, a soft delete.
+6. Add a `status` field to the Category model (You might have this
+   field already implemented). In point 5 above, we are doing a hard
+   delete of the category model. Instead, while overriding destroy(),
+   you can probably just set the `status` field to 0, ie, a soft
+   delete.
 
  - status = models.IntegerField(default=1)
 
@@ -104,11 +158,15 @@ marked with a '*'.
 
 7. Only display categories with status 1. (Override `def get_queryset()`)
 
+ - def get_queryset(self):
+       queryset = Category.objects.filter(status=1)
+       return queryset
+
  * curl -H "Content-Type:application/json" -X GET "http://localhost:8000/api/v1/categories/"
  O [{"id":1,"name":"Meat","status":1},{"id":4,"name":"Crockery","status":1}]
 
 8. Create a Product model and a /products/ endpoint.
-8.1. Add REST_FRAMEWORK = {'PAGE_SIZE':10} to settings.
+8.1. Add REST_FRAMEWORK = {'PAGE_SIZE':10} to settings.py
 
  - class Product(models.Model):
        name = models.CharField(max_length=50)
