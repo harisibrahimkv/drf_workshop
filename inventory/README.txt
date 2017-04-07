@@ -1,3 +1,25 @@
+Installation instructions
+-------------------------
+- virtualenv (https://virtualenv.pypa.io/en/stable/installation/)
+
+Unless you know well about managing your system wide installation and
+versions (and even if you do), please have virtualenv installed and
+setup.
+
+- Python 3.5 / Python 2.7
+- Django==1.10.3 (pip install django)
+- djangorestframework==3.5.3
+
+If you want to use Python 2.7, that's totally fine. Just make sure
+Django works properly for your setup and have djangorestframework
+installed.
+
+We will use sqlite as the database, which usually comes bundled
+along with Python. But just double check to make sure that you have it
+installed. (Hint: Simply starting a Django project and running "python
+manage.py migrate" should work flawlessly and leave you with a
+db.sqlite3 file in your root folder).
+
 Project Description
 -------------------
 
@@ -17,7 +39,6 @@ class Stat(models.Model):
 class Product(models.Model):
     name = models.CharField(max_length=50)
     category = models.ForeignKey(Category)
-
 
 
 A guide to following the steps below
