@@ -68,11 +68,30 @@ marked with a '*'.
  - class Category(models.Model):
        name = models.CharField(max_length=50)
 
+ In your views.py:
+ - class CategoryViewSet(viewsets.ModelViewSet):
+       queryset = Category.objects.all()
+       serializer_class = CategorySerializer
+
+ In your serializers.py:
+ - class CategorySerializer(serializers.ModelSerializer):
+        class Meta:
+            model = Category
+	    fields = '__all__'
+
+ In your api_urls.py:
+ - router = routers.SimpleRouter()
+   router.register(
+       r'categories',
+       CategoryViewSet,
+       base_name='category'
+   )
+
  * curl -H "Content-Type:application/json" -X POST -d '{"name":"Fruits"}' "http://localhost:8000/api/v1/categories/"
- * curl -H "Content-Type:application/json" -X DELETE "http://localhost:8000/api/v1/categories/2/"
  * curl -H "Content-Type:application/json" -X GET "http://localhost:8000/api/v1/categories/"
- * curl -H "Content-Type:application/json" -X GET "http://localhost:8000/api/v1/categories/1/"
- * curl -H "Content-Type:application/json" -X PATCH -d '{"name":"Vegetables"}' "http://localhost:8000/api/v1/categories/1/"
+ * curl -H "Content-Type:application/json" -X DELETE "http://localhost:8000/api/v1/categories/{id}/"
+ * curl -H "Content-Type:application/json" -X GET "http://localhost:8000/api/v1/categories/{id}/"
+ * curl -H "Content-Type:application/json" -X PATCH -d '{"name":"Vegetables"}' "http://localhost:8000/api/v1/categories/{id}/"
 
 2. Breakup the SimpleRouter entry for /categories/ and implement it manually.
 

@@ -16,7 +16,7 @@ class UserSerializer(serializers.ModelSerializer):
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-
+        fields = '__all__'
 
 class ProductSerializer(serializers.ModelSerializer):
     category_id = serializers.PrimaryKeyRelatedField(
@@ -40,3 +40,4 @@ class ProductSerializer(serializers.ModelSerializer):
 class StatSerializer(serializers.ModelSerializer):
     class Meta:
         model = Stat
+        fields = '__all__'
